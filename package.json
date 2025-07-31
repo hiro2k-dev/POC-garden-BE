@@ -1,0 +1,16 @@
+{
+  "name": "poc-iot-garden",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "winston": "^3.17.0",
+    "ws": "^8.18.3"
+  },
+  "scripts": {
+    "start": "npx nodemon src/server.js"
+  }
+}
