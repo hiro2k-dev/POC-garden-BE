@@ -20,8 +20,6 @@ function setupWebSocket(server) {
     clients.add(ws);
 
     ws.on("message", (msg) => {
-      logger.info("📨 Message received: " + msg);
-
       try {
         const data = JSON.parse(msg);
 
@@ -29,14 +27,21 @@ function setupWebSocket(server) {
           for (const client of clients) {
             if (client !== ws && client.readyState === WebSocket.OPEN) {
               client.send(JSON.stringify(data));
-              logger.info("➡️ Forwarded to client");
             }
           }
 
           ws.send(JSON.stringify({ type: "relay_response", status: "sent" }));
         }
+
+        if (data.type === "relay_status") {
+          for (const client of clients) {
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
+              client.send(JSON.stringify(data));
+            }
+          }
+        }
       } catch (err) {
-        logger.error("❌ Error parsing message:", err.message);
+        logger.error("Invalid WS Message:", err);
         ws.send(JSON.stringify({ type: "error", message: "Invalid JSON" }));
       }
     });
