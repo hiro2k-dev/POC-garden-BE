@@ -16,13 +16,14 @@ function setupWebSocket(server) {
       return;
     }
 
-    logger.info("✅ New WebSocket connection");
+    logger.info("New WebSocket connection");
     clients.add(ws);
 
     ws.on("message", (msg) => {
       try {
         const data = JSON.parse(msg);
-
+        console.log(data);
+        
         if (data.type === "relay_control") {
           for (const client of clients) {
             if (client !== ws && client.readyState === WebSocket.OPEN) {
@@ -36,6 +37,7 @@ function setupWebSocket(server) {
         if (data.type === "relay_status") {
           for (const client of clients) {
             if (client !== ws && client.readyState === WebSocket.OPEN) {
+              console.log("Sending status:", data)
               client.send(JSON.stringify(data));
             }
           }
@@ -48,11 +50,11 @@ function setupWebSocket(server) {
 
     ws.on("close", () => {
       clients.delete(ws);
-      logger.info("❌ Client disconnected");
+      logger.info("Client disconnected");
     });
   });
 
-  logger.info(`🧩 WebSocket server listening on ${wsPath}`);
+  logger.info(`WebSocket server listening on ${wsPath}`);
 }
 
 module.exports = setupWebSocket;
